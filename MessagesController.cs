@@ -1,0 +1,124 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Description;
+using Microsoft.Bot.Connector;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Resource;
+
+/*using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Connector;*/
+
+namespace Bot_Application2
+{
+    [BotAuthentication]
+    public class MessagesController : ApiController
+    {
+        /// <summary>
+        /// POST: api/Messages
+        /// Receive a message from a user and reply to it
+        /// </summary>
+        public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
+        {
+            if (activity.Type == ActivityTypes.Message)
+            {
+                ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+                Activity reply = activity.CreateReply();
+
+                /*要回傳幾個字的話把這個打開
+                await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());*/
+
+
+                //三個按鈕
+                if (activity.Text == "我可以幹嘛")
+                {
+                    reply.Text = "請選擇按鈕";
+                    reply.SuggestedActions = new SuggestedActions()
+                    {
+                        Actions = new List<CardAction>()
+                            {
+                                new CardAction(){Title="輸入追朔碼", Type=ActionTypes.ImBack, Value="輸入追朔碼"},
+                                new CardAction(){Title="上傳QR code", Type=ActionTypes.ImBack, Value="上傳QR code"},
+                                new CardAction(){Title="去產銷履歷網站", Type=ActionTypes.OpenUrl, Value="http://taft.coa.gov.tw/"},
+                            }
+                    };
+                    await connector.Conversations.ReplyToActivityAsync(reply);
+                }
+
+                //按輸入追朔碼按鈕後
+                if (activity.Text == "輸入追朔碼")
+                {
+                    reply.Text = "請輸入追朔碼";
+                    //輸入之後跑的東西
+
+
+                    await connector.Conversations.ReplyToActivityAsync(reply);
+                }
+
+                //按上傳QR code按鈕後
+                if (activity.Text == "上傳QR code")
+                {
+                    reply.Text = "請上傳QR code圖片";
+                    //上傳圖片之後跑的東西
+
+
+                    await connector.Conversations.ReplyToActivityAsync(reply);
+                }
+
+               
+
+            }
+
+            else
+            {
+                HandleSystemMessage(activity);
+            }
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            return response;
+        }
+
+       
+
+
+
+        private Activity HandleSystemMessage(Activity message)
+        {
+            if (message.Type == ActivityTypes.DeleteUserData)
+            {
+                // Implement user deletion here
+                // If we handle user deletion, return a real message
+            }
+            else if (message.Type == ActivityTypes.ConversationUpdate)
+            {
+                // Handle conversation state changes, like members being added and removed
+                // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
+                // Not available in all channels
+            }
+            else if (message.Type == ActivityTypes.ContactRelationUpdate)
+            {
+                // Handle add/remove from contact lists
+                // Activity.From + Activity.Action represent what happened
+            }
+            else if (message.Type == ActivityTypes.Typing)
+            {
+                // Handle knowing tha the user is typing
+            }
+            else if (message.Type == ActivityTypes.Ping)
+            {
+            }
+
+            return null;
+        }
+    }
+}
