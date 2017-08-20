@@ -13,12 +13,6 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Resource;
 
-/*using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Connector;*/
 
 namespace Bot_Application2
 {
@@ -76,8 +70,6 @@ namespace Bot_Application2
                     await connector.Conversations.ReplyToActivityAsync(reply);
                 }
 
-               
-
             }
 
             else
@@ -89,9 +81,6 @@ namespace Bot_Application2
         }
 
        
-
-
-
         private Activity HandleSystemMessage(Activity message)
         {
             if (message.Type == ActivityTypes.DeleteUserData)
